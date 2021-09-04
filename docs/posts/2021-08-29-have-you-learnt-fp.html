@@ -99,8 +99,6 @@
 <div class="sourceCode" id="cb3"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> add1 <span class="op">=</span> (a<span class="op">,</span> callback) <span class="kw">=&gt;</span> <span class="fu">callback</span>(a <span class="op">+</span> <span class="dv">1</span>)<span class="op">;</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">add1</span>(<span class="dv">3</span><span class="op">,</span> ans <span class="kw">=&gt;</span> <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(ans))<span class="op">;</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> <span class="fu">putStrLn</span> <span class="st">&quot;hello world&quot;</span></span></code></pre></div>
 <p>如果今天 <code>f</code>, <code>g</code> 都是 CPS 形式，那如何實作 <code>compose</code>？</p>
 <h2 id="回到大家認為怎麼樣算是會-fp-這個話題">回到「大家認為怎麼樣算是會 FP 」這個話題</h2>
 <p>包含延伸題，應該是 cover 第一到第三點，也就是會實作 fold/reduce，甚至包含了 Monad 的實作。剩下沒有 cover 到的：</p>

@@ -81,11 +81,6 @@ const add1 = (a, callback) => callback(a + 1);
 add1(3, ans => console.log(ans));
 ```
 
-```haskell
-main :: IO ()
-main = putStrLn "hello world"
-```
-
 如果今天 `f`, `g` 都是 CPS 形式，那如何實作 `compose`？
 
 ## 回到「大家認為怎麼樣算是會 FP 」這個話題
