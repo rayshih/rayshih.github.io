@@ -45,7 +45,7 @@ title: 怎麼樣算是學會了 Functional Programming？
 
 簡單論述一下題目本身：實作一個 function `compose`，它的功能是：給定兩個 functions `f`, `g` 當參數，回傳一個新的 function `h`，然後它的作用等於產生以下的宣告
 
-```javascript=
+```javascript
 // by javascript
 const h = compose(f, g);
 // equals to
@@ -60,7 +60,7 @@ const h = (x) => f(g(x));
 
 根據上題，如果參數不是固定的，那如何在不用變數的情況下，做出 multi-function composition？
 
-```javascript=
+```javascript
 // the same compose function, it can do following
 const g = compose([f1, f2, f3])
 // equals to
@@ -75,10 +75,15 @@ const g = x => f1(f2(f3(f4(x))))
 
 CPS 是指「不用 return 取得計算結果，改用 callback 來取得」，像這樣
 
-```javascript=
+```javascript
 const add1 = (a, callback) => callback(a + 1);
 
 add1(3, ans => console.log(ans));
+```
+
+```haskell
+main :: IO ()
+main = putStrLn "hello world"
 ```
 
 如果今天 `f`, `g` 都是 CPS 形式，那如何實作 `compose`？
