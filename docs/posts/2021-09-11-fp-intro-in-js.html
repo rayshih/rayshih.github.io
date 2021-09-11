@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Ray Shih's Blog - Functional Programming 入門 in JavaScript</title>
+        <link rel="stylesheet" type="text/css" href="../css/default.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+				<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-36905445-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-36905445-1');
+</script>
+
+
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="../">Ray Shih's Blog</a>
+            </div>
+            <div id="navigation">
+                <a href="../">Home</a>
+                <a href="../about.html">About</a>
+                <a href="../contact.html">Contact</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            <h1>Functional Programming 入門 in JavaScript</h1>
+
+            <div class="info">
+    Posted on September 11, 2021
+    
+</div>
+
+<p>本文會試著用最簡單的方式來幫助你入門 functional programming。</p>
+<h2 id="什麼是-functional-programming">什麼是 Functional Programming</h2>
+<p>其實定義有很多種。簡單的可以是「只要有用到 first class function 就算」，而困難的可以到「必須使用 mathematical function 才算」。而這邊我們採用的定義是：</p>
+<ol type="1">
+<li>用到 first class function</li>
+<li>盡量避免 side effect</li>
+</ol>
+<h2 id="什麼是-first-class-function">什麼是 First Class Function?</h2>
+<p>原本的 JS function 都是這麼定義的</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">functionName</span>(parameter) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// function body</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> something<span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>有了 function 當然就要用：</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> retValue <span class="op">=</span> <span class="fu">functionName</span>(<span class="dv">123</span>)<span class="op">;</span></span></code></pre></div>
+<p>以上就是基本的 function 慨念。那什麼是 first class function 呢？</p>
+<p>寫過 JS 一定會看過這種東西</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">$</span>(<span class="st">'button'</span>)<span class="op">.</span><span class="fu">onClick</span>(() <span class="kw">=&gt;</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">'this btn got clicked'</span>)<span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<p>這邊定義了一個匿名函數，然後塞給 <code>onClick</code> 當參數，這就是一種 first class function 的使用範例。差異是：<strong>「在任何可以放 value 的地方你都可以放一個匿名函數。」</strong> 這也是為什麼叫做 first class 的原因。</p>
+<h3 id="higher-order-function">Higher Order Function</h3>
+<p>所謂的 higher order 指的是 function 除了可以「接受/回傳 value」還可以「接受/回傳 function」。其中一個例子就是上面的 button onClick，它的參數是一個匿名函數。這邊再舉另外一個例子：</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> add <span class="op">=</span> (a) <span class="kw">=&gt;</span> {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (b) <span class="kw">=&gt;</span> a <span class="op">+</span> b<span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span></code></pre></div>
+<p>在這個例子裡 add function 會接受一個參數 a 然後回傳一個 function。 這麼做的好處是你可以做 partial parameter apply：</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> add3 <span class="op">=</span> <span class="fu">add</span>(<span class="dv">3</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="fu">add3</span>(<span class="dv">4</span>)) <span class="co">// 7</span></span></code></pre></div>
+<p>不過雖然這 Higher Order 聽起來是個很厲害的形容詞，不過其實跟「first class function」、「function as value」其實是同樣的意思。因為如果把 function 當作是一般的 value，那就沒有必要特別區分 higher order function 跟 first order function 了。</p>
+<h2 id="盡量避免-side-effect">盡量避免 side effect</h2>
+<p>什麼是 side effect 呢？讓我們來直接看看例子吧！以下都是 side effect：</p>
+<ul>
+<li>讀寫檔案，例如使用 readFile</li>
+<li>印東西，例如使用：console.log</li>
+<li>修改「外部」變數</li>
+</ul>
+<p>最後一個就比較有趣一點了，因為必須討論什麼是「外部」：</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> a <span class="op">=</span> <span class="dv">3</span><span class="op">;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">f</span>() {</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> <span class="dv">4</span><span class="op">;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> b <span class="op">=</span> <span class="dv">5</span><span class="op">;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    b<span class="op">++;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> b<span class="op">;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span></code></pre></div>
+<p>以上面的例子來說，f function 做了一種 side effect：「修改外部變數 a 」，不過修改 b 可以不算 side effect，因為它的生命週期就只侷限在 function f 裡面而已。</p>
+<p>我們也可以很簡單的直接把所有的變數修改都看成是 side effect。</p>
+<h3 id="為什麼要避免-side-effect">為什麼要避免 side effect？</h3>
+<p>假設我們有個 function f 會把外部變數 a 加ㄧ，然後有另外一個 function g，但你其實不知道 g 的實作是什麼：</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> a <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">f</span>() {</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> a <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">g</span>() {</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// don't know the detail</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">g</span>()<span class="op">;</span></span></code></pre></div>
+<p>請問：在這個程式執行後，你能知道 a 變成多少嗎？答案是不行，因為你不會知道 g 有沒有用到 f。</p>
+<p>但是如果 f 一開始就沒有修改 a，那 g 怎麼使用 f 都不會影響 a。</p>
+<p>也就是如果有 side effect 那這個程式就會變得相對難以理解。而只要一個 function 沒有 side effect 我們可以稱它為 pure function。而 pure function 除了比較好理解以外，也可以提高 reuseability, testability 等等等等。接下來都會提到。</p>
+<h2 id="那麼怎麼避免-side-effect-呢">那麼怎麼避免 side effect 呢？</h2>
+<p>很簡單：don’t do it（無誤</p>
+<p>其實這個就是大多數人入門 FP 碰到的問題，也就是這篇教學想要幫助大家的地方。</p>
+<p>接下來讓我們來看看怎麼用 first order function 來幫助我們避免 side effect。</p>
+<h2 id="avoid-side-effect-basic">Avoid side effect: Basic</h2>
+<p>讓我們從最基本的 array operation 來舉例。</p>
+<h3 id="example-1-map-an-array">Example 1: Map an Array</h3>
+<p>假設我們要把一個 array of number 中的所有數字都平方，那麼使用變數的話通常會這麼做：</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> origin <span class="op">=</span> [<span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span>]<span class="op">;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> squared <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (<span class="kw">let</span> n <span class="kw">of</span> origin) {</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  squared<span class="op">.</span><span class="fu">push</span>(n <span class="op">*</span> n)<span class="op">;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>push function 會修改 squared 的內容，所以是一種 side effect。</p>
+<p>而在 FP 的話通常會這麼做</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> squared2 <span class="op">=</span> origin<span class="op">.</span><span class="fu">map</span>(n <span class="kw">=&gt;</span> n <span class="op">*</span> n)<span class="op">;</span></span></code></pre></div>
+<p>使用 map function 就不需要使用 push 這個 function。</p>
+<h3 id="example-2-filter-an-array">Example 2: Filter an Array</h3>
+<p>給定一個數字陣列，如果要把所有整正數抓出來，那一般會這麼做：</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> origin <span class="op">=</span> [<span class="op">-</span><span class="dv">1</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="op">-</span><span class="dv">7</span><span class="op">,</span> <span class="dv">6</span><span class="op">,</span> <span class="dv">9</span>]<span class="op">;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> positives <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (<span class="kw">let</span> n <span class="kw">of</span> origin) {</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (n <span class="op">&gt;=</span> <span class="dv">0</span>) positives<span class="op">.</span><span class="fu">push</span>(n)<span class="op">;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>而 FP 通常都會提供 filter function 可以直接使用</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> positives <span class="op">=</span> origin<span class="op">.</span><span class="fu">filter</span>(n <span class="kw">=&gt;</span> n <span class="op">&gt;=</span> <span class="dv">0</span>)<span class="op">;</span></span></code></pre></div>
+<h3 id="example-3-sum-an-array">Example 3: Sum an Array</h3>
+<p>給定一個數字陣列，如果要把所有數字加總的話，一般會這麼做：</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> origin <span class="op">=</span> [<span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span>]<span class="op">;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> sum <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (<span class="kw">let</span> n <span class="kw">of</span> origin) {</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    sum <span class="op">+=</span> n<span class="op">;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>而在 FP 中通常會提供各種 helper function 所以</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(origin)<span class="op">;</span></span></code></pre></div>
+<p>但如果沒有的話也可以用 <code>reduce</code></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>origin<span class="op">.</span><span class="fu">reduce</span>((acc<span class="op">,</span> n) <span class="kw">=&gt;</span> acc <span class="op">+</span> n<span class="op">,</span> <span class="dv">0</span>)<span class="op">;</span></span></code></pre></div>
+<p>其中第一個參數是一個 aggregation function 他會把「當前的加總」跟「現在拿到的數字」加在一起。而第二個參數是「當前加總」的初始值。</p>
+<p>它運作方式其實跟 loop 很像，也就是範例中的 <code>n</code> 就是每一次 iterate 時拿到的數字，而每次 iterate，它都會使用這個 aggregation function，就跟 for loop 的 body 做的事情一樣。</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>origin<span class="op">.</span><span class="fu">reduce</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    (acc<span class="op">,</span> n) <span class="kw">=&gt;</span> acc <span class="op">+</span> n<span class="op">,</span> <span class="co">// 相當於 for loop body: sum += n;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span> <span class="co">// 相當於 let sum = 0;</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code></pre></div>
+<p>而因為它幾乎跟 loop 作用一樣，所以 loop 能做的它都能做，最主要的差別是：這中間完全沒有使用到變數。有興趣也可以試試看用 <code>reduce</code> 來實作 <code>map</code>, <code>filter</code>。</p>
+<h2 id="map-filter-這些-function-是怎麼運作的">Map, Filter 這些 function 是怎麼運作的？</h2>
+<p>雖然大多時候我們只需要知道怎麼使用這些 function ，但了解怎麼實做也是很有幫助的，尤其是當你碰到複雜的資料結構的時候。</p>
+<p>最簡單的實作就是允許範圍內的 mutability：</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> map <span class="op">=</span> (arr<span class="op">,</span> f) <span class="kw">=&gt;</span> {</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> ret <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">let</span> item <span class="kw">of</span> arr) {</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>      ret<span class="op">.</span><span class="fu">push</span>(f)<span class="op">;</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ret<span class="op">;</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="fu">map</span>([<span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span>]<span class="op">,</span> add3))<span class="op">;</span> <span class="co">// [4, 5, 6]</span></span></code></pre></div>
+<p>其結構非常簡單，還就只是透過一個 for loop 去把每個元素拿出來，然後 apply f function 後再塞回 ret。</p>
+<p>雖然這樣有使用到「變數」，嚴格說起來這個實作並不能符合 FP。不過因為它並沒有修改外部變數，所以從「封裝」的角度來說，它用起來跟 pure function 沒有什麼差異，而因為效能考量所以真正的實作也會與此類似。</p>
+<p>所以這邊有個有趣的但非必要的小作業：如何不使用變數來實作 map function 呢？</p>
+<ul>
+<li>提示一：會使用到 array function: splice</li>
+<li>提示二：會需要使用 recursion</li>
+</ul>
+<p>如果覺得這個題目有點困難的話，可以先練習實作 sum function，而它用起來像這樣：</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> total <span class="op">=</span> <span class="fu">sum</span>(<span class="dv">1</span><span class="op">,</span> <span class="dv">50</span>)<span class="op">;</span> <span class="co">// 從 1 加到 50</span></span></code></pre></div>
+<p>當然不能用數學公式，也不能用變數喔～</p>
+<h2 id="avoid-side-effect-inverse-of-control">Avoid side effect: Inverse of Control</h2>
+<p>你可能聽過 Inverse of Control 這個詞，通常都是在 OOP/Design Pattern 相關的文章中看到的。但其實這個觀念在 FP 可以說是基礎中的基礎，因為不用這個觀念的話，很多 function 實作起來很麻煩。</p>
+<h3 id="write-a-test-for-settimeout">Write a test for setTimeout</h3>
+<p>假設你今天想要為你的程式寫測試，而一個程式用到了 <code>setTimeout</code>，好巧不巧你的 timeout 設定是一小時，如果不做什麼特殊處理的話每次跑測試都要一個小時，這肯定是無法接受的。</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">doSomething</span>() {</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">doFirstThing</span>()<span class="op">;</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="pp">setTimeout</span>(doSecondThing<span class="op">,</span> <span class="dv">60</span> <span class="op">*</span> <span class="dv">60</span> <span class="op">*</span> <span class="dv">1000</span>)<span class="op">;</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>這個時候有兩種做法：1. 用 mock libary 例如 <code>sinonjs</code>, 2. 用 Dependency Injection。</p>
+<p>雖然前者是常見的方法，但是後者的泛用性更高，而且只需要匿名函數就能辦到。</p>
+<p>setTimeout 是一個 side-effectful function ，我們可以用 Dependency Injection 來做動態替換：</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">doSomething</span>(timeout) {</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">doFirstThing</span>()<span class="op">;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">timeout</span>(doSecondThing<span class="op">,</span> <span class="dv">60</span> <span class="op">*</span> <span class="dv">60</span> <span class="op">*</span> <span class="dv">1000</span>)<span class="op">;</span></span></code></pre></div>
+<p>注意上面的 timeout 是 doSomething 的一個參數喔！</p>
+<p>如此一來，在 test 就可以這樣寫：</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">test</span>() {</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> myTimeout <span class="op">=</span> (f<span class="op">,</span> time) <span class="kw">=&gt;</span> <span class="fu">f</span>()<span class="op">;</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">doSomething</span>(myTimeout)<span class="op">;</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>myTimeout 會直接呼叫 f 也就是 doSecondThing，這樣就不需要等待一個小時。</p>
+<p>而在 production 我們可以傳入 setTimeout 來達成原始邏輯：</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">doSomething</span>(setTimeout)<span class="op">;</span></span></code></pre></div>
+<p>這樣的作法除了可以幫助我們寫測試以外，我們還可以替換不同的邏輯，例如假設有個特殊的需求是要把所有的 “timeout” 都減半，那有了 dependency injection 我們可以這麼做：</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> halfTimeout <span class="op">=</span> (f<span class="op">,</span> time) <span class="kw">=&gt;</span> {</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="pp">setTimeout</span>(f<span class="op">,</span> time <span class="op">/</span> <span class="dv">2</span>)<span class="op">;</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">doSomething</span>(halfTimeout)<span class="op">;</span></span></code></pre></div>
+<p>這就呼應了我們前面講的：除了可以提高 testability，也可以提高 reuseability。</p>
+<h2 id="fp-在前端的應用">FP 在前端的應用</h2>
+<p>雖然 UI 有跟 user 有高度互動的關係，所以會用各種變數來存整個 UI 的狀態 (UI State)，但是這並不代表 FP 的 pure 觀念不能使用在 UI。相反的它在 UI 可是非常重要的，其中以 React 這個 frontend library 為最常見。<a href="https://zh-hant.reactjs.org/docs/react-component.html#render">官方文件</a>就直接寫上了「render() function 應該是 pure 的。」</p>
+<p>也就是，正是因為 UI 有很多狀態需要管理，所以一但程式複雜起來，就必須要對狀態的數量做限制，只要是不必要的狀態都必須避免，而這也符合了 Single Source of True 的原則。</p>
+<p>除了 React 以外，就連 Angular 這個原本著重於 view model binding 方法的也開始採用 RxJS 這種大量使用 FP 的 library。而且這個原則並不只局限於 web frontend，近幾年使用類似概念的其他 UI library 也出現在 mobile 平台上，像是 Android 的 Compose、iOS 的 SwiftUI。而且這兩者都有官方 support。</p>
+<h2 id="結語">結語</h2>
+<p>其實入門 FP 並不困難，只要掌握 first class function 跟 pure function 的兩個觀念，並學會使用 map, filter, reduce 等常見 function，這樣就對 90% 的日常開發非常有幫助了。</p>
+<p>雖然你可能會聽過有人說 Functor, Monad 對於理解 FP 來說很重要，但其實對日常開發來說通常不是必要的。多數狀況都單純的只是對於使用的 library 熟不熟悉罷了。</p>
+<p>不過有趣的地方就在這裡，雖然入門 FP 其實非常容易，但正式因為基礎觀念少所以如何延伸就變得有趣許多。有興趣的話，學習 FP 絕對是最值得投資時間的技術之一。</p>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    </body>
+</html>
