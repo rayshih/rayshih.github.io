@@ -258,6 +258,7 @@ setTimeout 是一個 side-effectful function ，我們可以用 Dependency Injec
 function doSomething(timeout) {
     doFirstThing();
     timeout(doSecondThing, 60 * 60 * 1000);
+}
 ```
 
 注意上面的 timeout 是 doSomething 的一個參數喔！
