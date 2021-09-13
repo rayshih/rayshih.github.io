@@ -38,7 +38,7 @@ $('button').onClick(() => {
 });
 ```
 
-這邊定義了一個匿名函數，然後塞給 `onClick` 當參數，這就是一種 first class function 的使用範例。差異是：**「在任何可以放 value 的地方你都可以放一個匿名函數。」** 這也是為什麼叫做 first class 的原因。 
+這邊定義了一個匿名函數，然後塞給 `onClick` 當參數，這就是一種 first class function 的使用範例。差異是：**「在任何可以放 value 的地方你都可以放一個匿名函數。」** 這也是為什麼叫做 first class 的原因。
 
 ### Higher Order Function
 
@@ -295,7 +295,7 @@ doSomething(halfTimeout);
 
 雖然 UI 有跟 user 有高度互動的關係，所以會用各種變數來存整個 UI 的狀態 (UI State)，但是這並不代表 FP 的 pure 觀念不能使用在 UI。相反的它在 UI 可是非常重要的，其中以 React 這個 frontend library 為最常見。[官方文件](https://zh-hant.reactjs.org/docs/react-component.html#render)就直接寫上了「render() function 應該是 pure 的。」
 
-也就是，正是因為 UI 有很多狀態需要管理，所以一但程式複雜起來，就必須要對狀態的數量做限制，只要是不必要的狀態都必須避免，而這也符合了 Single Source of True 的原則。
+也就是，正是因為 UI 有很多狀態需要管理，所以一但程式複雜起來，就必須要對狀態的數量做限制，只要是不必要的狀態都必須避免，而這也符合了 Single Source of Truth 的原則。
 
 除了 React 以外，就連 Angular 這個原本著重於 view model binding 方法的也開始採用 RxJS 這種大量使用 FP 的 library。而且這個原則並不只局限於 web frontend，近幾年使用類似概念的其他 UI library 也出現在 mobile 平台上，像是 Android 的 Compose、iOS 的 SwiftUI。而且這兩者都有官方 support。
 
